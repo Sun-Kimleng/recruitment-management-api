@@ -54,6 +54,7 @@ class VerificationController extends Controller
         if ($request->user()->hasVerifiedEmail()) {
 
             return response(['message'=>'Already verified']);
+            // return redirect()->away(env('APP_FRONTEND_URL'));
         }
 
         $request->user()->sendEmailVerificationNotification();
@@ -83,17 +84,18 @@ class VerificationController extends Controller
 
         if ($request->user()->hasVerifiedEmail()) {
 
-            return response(['message'=>'Already verified']);
+            // return response(['message'=>'Already verified']);
 
             
             // return redirect($this->redirectPath());
+            return redirect()->away(env('APP_FRONTEND_URL'));
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
-
-        return response(['message'=>'Successfully verified']);
+        //redirect to react frontend
+        return redirect()->away(env('APP_FRONTEND_URL'));
 
     }
 }

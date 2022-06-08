@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\VerifiesEmails;
 
 use function PHPSTORM_META\map;
 
@@ -36,7 +37,7 @@ class UserController extends Controller
                 'email'=>$request->input('email'),
                 'password'=> Hash::make($request->input('password')),
             ]);
-           
+            event(new Registered($user));
             $token = $user->createToken($user->email. "_token")->plainTextToken;
             
 
@@ -61,7 +62,11 @@ class UserController extends Controller
         }else{
             $user = User::where('email', $request->email)->first();
 
-            if(! $user || ! Hash::check($request->password, $user->password, )){
+            if(!$user->hasVerifiedEmail()){
+
+                return response()->json(['message'=>'You need to verify your email first', 'status'=>401]);
+            }
+            else if(! $user || ! Hash::check($request->password, $user->password, )){
 
                 return response()->json(['status'=>404, 'message'=>'Invalid Credentials']);
             }else{

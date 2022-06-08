@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -37,4 +38,5 @@ Route::prefix('/user')->name('user.')->group(function(){
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify'); // Make sure to keep this as your route name
 
 Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
+
 
