@@ -60,19 +60,24 @@ class UserController extends Controller
         if($validator->fails()){
             return response()->json(['error'=> $validator->errors(),]);
         }else{
+
             $user = User::where('email', $request->email)->first();
-
-            if(!$user->hasVerifiedEmail()){
-
-                return response()->json(['message'=>'You need to verify your email first', 'status'=>401]);
-            }
-            else if(! $user || ! Hash::check($request->password, $user->password, )){
+            
+            if(! $user || ! Hash::check($request->password, $user->password, )){
 
                 return response()->json(['status'=>404, 'message'=>'Invalid Credentials']);
             }else{
-                $token =$user->createToken($request->email.'_token')->plainTextToken;
+
+                if(!$user->hasVerifiedEmail()){
+                    $token = $user->createToken($request->email.'_token')->plainTextToken;
+                    return response()->json(['message'=>'You need to verify your email first', 'status'=>401 , 'token'=>$token]);
+                }
+                else{
+                    $token = $user->createToken($request->email.'_token')->plainTextToken;
                 
-                return response()->json(['status'=>200 ,'message'=>'You\'re logged in', 'token'=>$token, 'username'=>$user->username]);
+                    return response()->json(['status'=>200 ,'message'=>'You\'re logged in', 'token'=>$token, 'username'=>$user->username]);
+                }
+                
             }
         }
     }
