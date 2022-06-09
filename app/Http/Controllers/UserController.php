@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\VerifiesEmails;
+use Laravel\Ui\Presets\React;
 
 use function PHPSTORM_META\map;
 
@@ -82,9 +83,9 @@ class UserController extends Controller
         }
     }
 
-    public function logout(){
-        auth()->user()->tokens()->delete();
-
+    public function logout(Request $request){
+        
+        auth()->user()->tokens()->where('id', auth()->user()->currentAccessToken()->id)->delete();
         return response()->json(['status'=>200, 'message'=>'You have been logged out succcesful' ]);
 
     }

@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     
 });
 
-Route::middleware(['auth:sanctum'])->group(function(){
+Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     Route::prefix('/user')->name('user.')->group(function(){
         Route::get('checkAuth', function(){return response()->json(['message'=>'You are authenticated', 'status'=>200]);});
         Route::post('/logout',[UserController::class, 'logout'])->name('logout');

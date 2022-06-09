@@ -77,7 +77,9 @@ class VerificationController extends Controller
     public function verify(Request $request)
     {
         auth()->loginUsingId($request->route('id'));
-
+        
+        $request->user()->tokens()->delete();
+        
         if ($request->route('id') != $request->user()->getKey()) {
             throw new AuthorizationException;
         }
