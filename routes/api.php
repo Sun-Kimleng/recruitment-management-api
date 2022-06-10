@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ForgetpasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -19,10 +20,9 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
-
-    
 });
 
+//Authenticated User Routes
 Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     Route::prefix('/user')->name('user.')->group(function(){
         Route::get('checkAuth', function(){return response()->json(['message'=>'You are authenticated', 'status'=>200]);});
@@ -30,13 +30,18 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     });
 });
 
+//Login and Register User
 Route::prefix('/user')->name('user.')->group(function(){
     Route::post('/create', [UserController::class, 'create'])->name('create');
     Route::post('/login',[UserController::class, 'login'])->name('login');
 });
 
+//Email Verification
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify'); // Make sure to keep this as your route name
-
 Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
+
+//Forget Password
+Route::post('forget-password', [ForgetpasswordController::class, 'forgetPassword']);
+Route::post('reset-password', [ForgetpasswordController::class, 'reset']);
 
 
