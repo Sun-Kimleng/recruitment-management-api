@@ -22,11 +22,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Authenticated User Routes
+//Authenticated for all users
 Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     Route::prefix('/user')->name('user.')->group(function(){
-        Route::get('checkAuth', function(){return response()->json(['message'=>'You are authenticated', 'status'=>200]);});
         Route::post('/logout',[UserController::class, 'logout'])->name('logout');
+        Route::get('/checkAuth', function(){return response()->json(['message'=>'You are authenticated', 'status'=>200]);});
+    });
+});
+
+//Authenticated For Admin
+Route::middleware(['auth:sanctum', 'verified', 'isAdmin'])->group(function(){
+    Route::prefix('/user')->name('user.')->group(function(){
+        
     });
 });
 

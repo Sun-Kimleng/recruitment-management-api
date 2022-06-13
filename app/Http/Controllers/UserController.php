@@ -22,7 +22,8 @@ class UserController extends Controller
             'username'=>'required|max: 12',
             'email'=>'required|unique:users',
             'password'=>'required',
-            'confirmPassword'=>'required|same:password'
+            'confirmPassword'=>'required|same:password',
+            'role'=>'required'
         ],
     );
         
@@ -31,9 +32,10 @@ class UserController extends Controller
         return response()->json(['error'=>$validator->errors()]);
         
         }else{
-
+            // ROLES 1:Admin, 2:Editor, 3:Moderator
             $user = User::create([
                 'user_id'=>$user_id,
+                'role'=>$request->input('role'),
                 'username'=>$request->input('username'),
                 'email'=>$request->input('email'),
                 'password'=> Hash::make($request->input('password')),
@@ -74,9 +76,15 @@ class UserController extends Controller
                     return response()->json(['message'=>'You need to verify your email first', 'status'=>401 , 'token'=>$token]);
                 }
                 else{
-                    $token = $user->createToken($request->email.'_token')->plainTextToken;
+                    if($user->role === 1){
+                        $token = $user->createToken($request->email.'_token', ['server:admin'])->plainTextToken;
+                        return response()->json(['status'=>200 ,'message'=>'You\'re logged in', 'token'=>$token, 'username'=>$user->username, 'role'=> 1]);
+                    }else{
+                        $token = $user->createToken($request->email.'_token', [''])->plainTextToken;
+                        return response()->json(['status'=>200 ,'message'=>'You\'re logged in', 'token'=>$token, 'username'=>$user->username, 'role'=> 'no role']);
+                    }
                 
-                    return response()->json(['status'=>200 ,'message'=>'You\'re logged in', 'token'=>$token, 'username'=>$user->username]);
+                    
                 }
                 
             }
