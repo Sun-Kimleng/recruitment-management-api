@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admins\JobController;
 use App\Http\Controllers\ForgetpasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,10 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     Route::prefix('/user')->name('user.')->group(function(){
         Route::post('/logout',[UserController::class, 'logout'])->name('logout');
         Route::get('/checkAuth', function(){return response()->json(['message'=>'You are authenticated', 'status'=>200]);});
+        
+        //Job
+        Route::apiResource('/job', JobController::class);
+    
     });
 });
 

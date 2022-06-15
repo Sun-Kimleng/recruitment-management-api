@@ -23,7 +23,6 @@ class UserController extends Controller
             'email'=>'required|unique:users',
             'password'=>'required',
             'confirmPassword'=>'required|same:password',
-            'role'=>'required'
         ],
     );
         
@@ -35,7 +34,7 @@ class UserController extends Controller
             // ROLES 1:Admin, 2:Editor, 3:Moderator
             $user = User::create([
                 'user_id'=>$user_id,
-                'role'=>$request->input('role'),
+                'role'=>1,
                 'username'=>$request->input('username'),
                 'email'=>$request->input('email'),
                 'password'=> Hash::make($request->input('password')),
@@ -91,7 +90,7 @@ class UserController extends Controller
         }
     }
 
-    public function logout(Request $request){
+    public function logout(){
         
         auth()->user()->tokens()->where('id', auth()->user()->currentAccessToken()->id)->delete();
         return response()->json(['status'=>200, 'message'=>'You have been logged out succcesful' ]);
