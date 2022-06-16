@@ -33,12 +33,15 @@ class JobController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name'=>'required|min:1|max:30',
+            'name'=>'required|min:1|max:30|unique:jobs',
             'description'=>'required',
-        ]);
+        ],
+    [
+        'name.unique'=>'This job is already in the list',
+    ]);
 
         if($validator->fails()){
-            return response()->json(['errors'=>$validator->errors()]);
+            return response()->json(['errors'=>$validator->errors(), 'status'=> 404]);
         }else{
             $job = new Job;
 
@@ -47,7 +50,7 @@ class JobController extends Controller
 
             $job->save();
 
-            return response()->json(['message'=>'Succesful added']);
+            return response()->json(['message'=>'Succesful added', 'status'=>200]);
         }
     }
 
@@ -107,7 +110,7 @@ class JobController extends Controller
         
             if($job){
                 $job->delete();
-                return response()->json(['message'=>'Succesful Deleted']);
+                return response()->json(['message'=>'Succesful Deleted', 'status'=>200]);
             }else{
                 return response()->json(['errors'=> 'Cannot find this job', 'status'=>404]);
             }
