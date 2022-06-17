@@ -18,7 +18,7 @@ class JobController extends Controller
      */
     public function index()
     {
-        $data = Job::all();
+        $data = DB::table('jobs')->orderBy('created_at', 'desc')->get();
 
         return response()->json(['data'=>$data, 'status'=> 200]);
 
