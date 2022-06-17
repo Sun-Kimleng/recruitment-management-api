@@ -19,6 +19,8 @@ class JobController extends Controller
     public function index()
     {
         $data = DB::table('jobs')->orderBy('created_at', 'desc')->get();
+        
+       
 
         return response()->json(['data'=>$data, 'status'=> 200]);
 
@@ -47,6 +49,7 @@ class JobController extends Controller
 
             $job->name = $request->input(['name']);
             $job->description = $request->input(['description']);
+            $job->added_by = auth()->user()->username;
 
             $job->save();
 
@@ -84,8 +87,11 @@ class JobController extends Controller
 
         }else{
             
+            $update = new Job;
+
+            $job = $update->where('id', $id)->update(['name'=>$request->input('name'), 'description'=>$request->input('description')]);
             
-            $job = DB::table('jobs')->where('id', $id)->update(['name'=>$request->input('name'), 'description'=>$request->input('description')]);
+            
             if($job){
                 return response()->json(['message'=>'Updated succesfull', 'status'=>200]);
             }else{
