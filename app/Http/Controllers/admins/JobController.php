@@ -113,8 +113,13 @@ class JobController extends Controller
         try{
 
             $job = Job::find($id);
-        
-            if($job){
+            if (is_array($id)) 
+            {
+                Job::destroy($id);
+            }
+            
+
+            if($job){   
                 $job->delete();
                 return response()->json(['message'=>'Succesful Deleted', 'status'=>200]);
             }else{
@@ -125,4 +130,20 @@ class JobController extends Controller
             return response()->json(['errors'=> $e->getMessage(), 'status'=> 401]);
         }
     }
-}
+
+    public function deleteAll($id)
+    {   
+        $ids = explode(",",$id,);
+
+        // return response()->json(['message'=>$ids]);
+
+        $result = DB::table("jobs")->whereIn('id',$ids)->delete();
+        
+        if($result){
+            return response()->json(['message'=>'succesful', 'status'=>200]);
+        }else{
+            return response()->json(['errors'=>'cannot delete', 'status'=>404]);
+        }
+       
+    }
+}       

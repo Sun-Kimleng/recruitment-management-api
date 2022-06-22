@@ -30,8 +30,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function(){
         Route::get('/checkAuth', function(){return response()->json(['message'=>'You are authenticated', 'status'=>200]);});
         
         //Job
+        Route::delete('/job/deleteAll/{id}', [JobController::class, 'deleteAll']);
         Route::apiResource('/job', JobController::class);
-    
+        
     });
 });
 
