@@ -96,4 +96,11 @@ class UserController extends Controller
         return response()->json(['status'=>200, 'message'=>'You have been logged out succcesful' ]);
 
     }
+
+    public function index(){
+
+        $user = User::find(auth()->user()->id);
+
+        return response()->json(['user'=>$user, 'status'=>200]);
+    }
 }

@@ -29,6 +29,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function(){
         Route::post('/logout',[UserController::class, 'logout'])->name('logout');
         Route::get('/checkAuth', function(){return response()->json(['message'=>'You are authenticated', 'status'=>200]);});
         
+        //User Information
+        Route::get('/detail', [UserController::class, 'index']);
+
         //Job
         Route::delete('/job/deleteAll/{id}', [JobController::class, 'deleteAll']);
         Route::apiResource('/job', JobController::class);
