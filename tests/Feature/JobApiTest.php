@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class JobApiTest extends TestCase
@@ -19,30 +20,27 @@ class JobApiTest extends TestCase
     {   
         //login in the the user first
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+
+        $this ->actingAs($user, 'sanctum', 'verified');
         //Fill the data form
         $formData = [
             'name'=> 'Netfl',
             'description'=>'etc',
         ];
         
-
-        $this->withoutExceptionHandling();
-
         // $this->post(route('user.job'), $formData)
-        // $this->json('POST', 'user/job', $formData)
-        
+        // $this->json('POST', 'user/job', $formData)      
 
         $response = $this->withHeaders([
             'accept' => 'application/json',
         ])->postJson('api/user/job', $formData);
- 
+            
+
         $response
-            ->assertStatus(201)
-            ->assertJson([
-                'created' => true,
-            ]);
-        
-        $response->assertStatus((201));
+            ->assertStatus(200)
+            ->assertJson(
+                ['message'=>'Succesful added']
+            );
+
     }
 }
