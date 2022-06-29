@@ -18,9 +18,10 @@ class JobController extends Controller
      */
     public function index()
     {
-        $data = DB::table('jobs')->orderBy('created_at', 'desc')->get();
-        
-       
+        $data = DB::table('jobs')
+            ->join('users', 'users.id','=', 'jobs.added_by')
+            ->select('jobs.*', ('users.username as user_added'))
+            ->orderBy('created_at', 'desc')->get();
 
         return response()->json(['data'=>$data, 'status'=> 200]);
 
@@ -49,7 +50,7 @@ class JobController extends Controller
 
             $job->name = $request->input(['name']);
             $job->description = $request->input(['description']);
-            $job->added_by = auth()->user()->username;
+            $job->added_by = auth()->user()->id;
 
             $job->save();
 

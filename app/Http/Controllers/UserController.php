@@ -9,12 +9,14 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 use Laravel\Ui\Presets\React;
+use phpDocumentor\Reflection\Types\Null_;
 
 use function PHPSTORM_META\map;
 
 class UserController extends Controller
 {
     public function create(Request $request){
+
         $users = new User;
         $user_id = Helper::IDGenerator($users, 'user_id', 5, 'AGB');
 
@@ -102,5 +104,42 @@ class UserController extends Controller
         $user = User::find(auth()->user()->id);
 
         return response()->json(['user'=>$user, 'status'=>200]);
+    }
+
+    public function updateEmail(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'email'=>'required|email|unique:users'
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['errors'=>$validator->errors()]);
+        }else{
+            $user = User::find(auth()->user()->id);
+            $user->email = $request->input('email');
+            $user->email_verified_at = null;
+            $user->update();
+
+            $user->sendEmailVerificationNotification();
+
+            return response()->json(['message'=>'succesful updated the email!', 'status'=>200]);
+        }
+        
+    }
+
+    public function updateUsername(Request $request){
+        $validator = Validator::make($request->all(), [
+            'username'=>'required|max:12'
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['errors'=>$validator->errors()]);
+        }else{
+            $user = User::find($request->user()->id);
+            $user->username = $request->input('username');
+            $user->update();
+
+            return response()->json(['message'=>'Successful updated the username', 'status'=>200]);
+        }
     }
 }

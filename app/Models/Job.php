@@ -15,4 +15,8 @@ class Job extends Model
         'added_by',
      
     ];
+
+    public function added_by(){
+        $this->belongsTo(User::class, 'added_by', 'id');
+    }
 }

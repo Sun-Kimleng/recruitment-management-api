@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admins\JobController;
 use App\Http\Controllers\ForgetpasswordController;
+use App\Http\Controllers\NewEmailVerificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -24,13 +25,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //Authenticated for all users
-Route::middleware(['auth:sanctum', 'verified'])->group(function(){
+Route::middleware(['auth:sanctum'])->group(function(){
     Route::prefix('/user')->name('user.')->group(function(){
         Route::post('/logout',[UserController::class, 'logout'])->name('logout');
         Route::get('/checkAuth', function(){return response()->json(['message'=>'You are authenticated', 'status'=>200]);});
         
         //User Information
         Route::get('/detail', [UserController::class, 'index']);
+
+        //User Update Email
+        Route::post('/update_email', [UserController::class, 'updateEmail']);
+
+        //User Update Username
+        Route::post('/update_username', [UserController::class, 'updateUsername']);
 
         //Job
         Route::delete('/job/deleteAll/{id}', [JobController::class, 'deleteAll']);

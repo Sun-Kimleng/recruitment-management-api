@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Notifications;
+
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\URL;
+
+class EmailChangeNotification extends Notification implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Create a new notification instance.
+     *
+     * @return void
+     */
+    public function __construct(string $userId)
+    {
+        $this->userId = $userId;
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        return ['mail'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)->markdown('mail.email-reset', [
+            'notifiable' => $notifiable,
+            'route' => $this->verifyRoute($notifiable)
+        ]);
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    protected function verifyRoute(AnonymousNotifiable $notifiable)
+    {
+        return URL::temporarySignedRoute('user.email-change-verify', 60 * 60, [
+            'user' => $this->userId,
+            'email' => $notifiable->routes['mail']
+        ]);
+    }
+}
