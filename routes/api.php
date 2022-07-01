@@ -39,6 +39,12 @@ Route::middleware(['auth:sanctum'])->group(function(){
         //User Update Username
         Route::post('/update_username', [UserController::class, 'updateUsername']);
 
+        //User Change Password
+        Route::post('/change_password', [UserController::class, 'changePassword']);
+
+        //User Change Avatar
+        Route::post('/change_avatar', [UserController::class, 'changeAvatar']);
+        
         //Job
         Route::delete('/job/deleteAll/{id}', [JobController::class, 'deleteAll']);
         Route::apiResource('/job', JobController::class);

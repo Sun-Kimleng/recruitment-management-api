@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\VerifiesEmails;
+use Illuminate\Support\Facades\File;
 use Laravel\Ui\Presets\React;
 use phpDocumentor\Reflection\Types\Null_;
 
@@ -140,6 +141,74 @@ class UserController extends Controller
             $user->update();
 
             return response()->json(['message'=>'Successful updated the username', 'status'=>200]);
+        }
+    }
+
+    public function changePassword(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'oldPassword'=> 'required',
+            'newPassword'=> 'required',
+            'confirmNewPassword'=>'required|same:newPassword',
+        ]);
+        
+        $user = User::where('email', auth()->user()->email)->first();
+
+        if($validator->fails()){
+            return response()->json(['status'=>404, 'errors'=>$validator->errors()]);
+        }else{
+
+            if(!$user || !Hash::check($request->input('oldPassword'), $user->password)){
+                return response()->json(['status'=>403, 'errors'=>'Your old password is invalid']);
+            }else{
+                $user_pw = User::find(auth()->user()->id);
+                $user_pw->password = Hash::make($request->input('newPassword'));
+                $user_pw->update();
+                auth()->user()->tokens()->delete();
+                return response()->json(['status'=>200, 'message'=>'Your password has been updated. you will be logged out after this.']);
+            }
+
+        }
+    }
+
+    public function changeAvatar(Request $request){
+        
+        $validator = validator::make($request->all(), [
+            'avatar'=>'required|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        if($validator->fails()){
+
+            return response()->json(['status'=>404, 'errors'=>$validator->errors()]);
+        
+        }else{
+            $user = User::find(auth()->user()->id);
+
+            $file = $request->file('avatar');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time().'.'.$extension;
+
+            if(File::exists(public_path($user->avatar))){
+
+                File::delete($user->avatar);
+                $file->move('uploads/users/', $filename);
+                $user->avatar = 'uploads/users/'.$filename;
+                $user->update();
+
+                return response()->json(['status'=>200, 'message'=>'Successful updated avatar']);
+            }else{
+
+                $file->move('uploads/users/', $filename);
+                $user->avatar = 'uploads/users/'.$filename;
+                $user->save();
+
+                return response()->json(['status'=>200, 'message'=>'Successful added avatar']);
+            }
+            
+            
+
+            
+        
         }
     }
 }
