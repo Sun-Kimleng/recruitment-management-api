@@ -157,8 +157,12 @@ class UserController extends Controller
         if($validator->fails()){
             return response()->json(['status'=>404, 'errors'=>$validator->errors()]);
         }else{
+            if(Hash::check($request->input('newPassword'), $user->password)){
 
-            if(!$user || !Hash::check($request->input('oldPassword'), $user->password)){
+                return response()->json(['status'=>402, 'message'=>'Tf? why did you change your password when your new password is same as the old one?']);
+
+            }else if(!$user || !Hash::check($request->input('oldPassword'), $user->password)){
+
                 return response()->json(['status'=>403, 'errors'=>'Your old password is invalid']);
             }else{
                 $user_pw = User::find(auth()->user()->id);
