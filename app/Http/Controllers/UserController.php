@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Ui\Presets\React;
 use phpDocumentor\Reflection\Types\Null_;
 
@@ -61,13 +62,31 @@ class UserController extends Controller
             'email'=> 'required',
             'password'=> 'required'
         ]);
+
         
+
         if($validator->fails()){
             return response()->json(['error'=> $validator->errors(),]);
         }else{
 
             $user = User::where('email', $request->email)->first();
+
+            $executed = RateLimiter::attempt(
+                'send-message:'.$user->id,
+                $perMinute = 5,
+                function() {
+                    // Send message...
+                }
+            );
             
+            //Too many Attemp
+            if (! $executed) {
+                return response()->json(['status'=>429, 'message'=>'Too many attemps.']);
+
+            }else{
+            //Approve Request
+            
+            //Authenticate User
             if(! $user || ! Hash::check($request->password, $user->password, )){
 
                 return response()->json(['status'=>404, 'message'=>'Invalid Credentials']);
@@ -89,6 +108,7 @@ class UserController extends Controller
                     
                 }
                 
+            }
             }
         }
     }
