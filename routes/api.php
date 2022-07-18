@@ -45,6 +45,26 @@ Route::middleware(['auth:sanctum'])->group(function(){
         //User Change Avatar
         Route::post('/change_avatar', [UserController::class, 'changeAvatar']);
         
+        //User Admin Creates Users
+        Route::post('/admin_creates_users', [UserController::class, 'adminCreatesUsers']);
+
+        //User Get Admin,Editor,Moderator
+        Route::get('/get_admin', [UserController::class, 'getAdmin']);
+        Route::get('/get_editor', [UserController::class, 'getEditor']);
+        Route::get('/get_moderator', [UserController::class, 'getModerator']);
+
+        //User Edit User Role
+        Route::put('/edit_user_role/{id}', [UserController::class, 'editUserRole']);
+
+        //User Delete User
+        Route::post('/delete_user/{id}', [UserController::class, 'deleteUser']);
+
+        //User Deactivate and Reactviate Account
+        Route::put('/deactivate_user/{id}', [UserController::class,  'deactivateAccount']);
+
+        //User Get User By Id
+        Route::get('/get_user_by_id/{id}', [UserController::class, 'getUserById']);
+
         //Job
         Route::delete('/job/deleteAll/{id}', [JobController::class, 'deleteAll']);
         Route::apiResource('/job', JobController::class);
