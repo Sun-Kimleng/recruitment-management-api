@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Laravel\Passport\Passport;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -24,7 +25,21 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+    
+        Passport::routes();
 
-        //
+        Passport::tokensCan([
+            'admin' => 'Admin',
+            'editor' => 'Editor',
+            'moderator' => 'Moderator',
+        ]);
+
+        Passport::setDefaultScope([
+            'admin',
+            'editor',
+            'moderator'
+        ]);
+
+        Passport::personalAccessTokensExpireIn(now()->addDays(7));
     }
 }

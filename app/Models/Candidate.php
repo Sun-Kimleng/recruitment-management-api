@@ -10,9 +10,9 @@ use Laravel\Passport\HasApiTokens;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class User extends Authenticatable implements MustVerifyEmail
-{   
-    protected $table='users';
+class Candidate extends Authenticatable implements MustVerifyEmail
+{
+    protected $table='candidates';
 
     use HasApiTokens, HasFactory, Notifiable;
 

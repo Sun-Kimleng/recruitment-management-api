@@ -40,8 +40,7 @@ class UserController extends Controller
                 'password'=> Hash::make($request->input('password')),
             ]);
             event(new Registered($user));
-            $token = $user->createToken($user->email. "_token")->plainTextToken;
-            
+            $token = $user->createToken($user->email. "_token")->accessToken;
 
             return response()->json([
                 'status'=>200,
@@ -118,7 +117,7 @@ class UserController extends Controller
                 }
             );
             
-            //Too many Attemp
+            //Too many Attempt
             if (! $executed) {
                 return response()->json(['status'=>429, 'message'=>'Too many attemps.']);
 
@@ -138,15 +137,15 @@ class UserController extends Controller
                 }else if($user->user_status === 'active'){
 
                     if(!$user->hasVerifiedEmail()){
-                        $token = $user->createToken($request->email.'_token')->plainTextToken;
+                        $token = $user->createToken($user->email. "_token")->accessToken;
                         return response()->json(['message'=>'You need to verify your email first', 'status'=>401 , 'token'=>$token]);
                     }
                     else{
-                            if($user->role === 'nfoqbehdk283'){
-                                $token = $user->createToken($request->email.'_token', ['server:admin'])->plainTextToken;
+                            if($user->role == 'nfoqbehdk283'){
+                                $token = $user->createToken($request->email.'_token', ['admin'])->accessToken;
                                 return response()->json(['status'=>200 ,'message'=>'You\'re logged in', 'token'=>$token, 'username'=>$user->username, 'permission'=> 'admin']);
                             }else{
-                                $token = $user->createToken($request->email.'_token', [''])->plainTextToken;
+                                $token = $user->createToken($request->email.'_token', ['admin'])->accessToken;
                                 return response()->json(['status'=>200 ,'message'=>'You\'re logged in', 'token'=>$token, 'username'=>$user->username, 'permission'=> 'none']);
                             }
                         }
@@ -158,7 +157,8 @@ class UserController extends Controller
 
     public function logout(){
         
-        auth()->user()->tokens()->where('id', auth()->user()->currentAccessToken()->id)->delete();
+        // auth()->user()->tokens()->where('id', auth()->user()->currentAccessToken()->id)->delete();
+        auth()->user()->token()->revoke();
         return response()->json(['status'=>200, 'message'=>'You have been logged out succcesful' ]);
 
     }

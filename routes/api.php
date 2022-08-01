@@ -20,12 +20,12 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 //Authenticated for all users
-Route::middleware(['auth:sanctum'])->group(function(){
+Route::middleware(['auth:api'])->group(function(){
     Route::prefix('/user')->name('user.')->group(function(){
         Route::post('/logout',[UserController::class, 'logout'])->name('logout');
         Route::get('/checkAuth', function(){return response()->json(['message'=>'You are authenticated', 'status'=>200]);});
@@ -73,7 +73,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
 });
 
 //Authenticated For Admin
-Route::middleware(['auth:sanctum', 'verified', 'isAdmin'])->group(function(){
+Route::middleware(['auth:api', 'verified', 'scope:admin'])->group(function(){
     Route::prefix('/user')->name('user.')->group(function(){
         
     });
