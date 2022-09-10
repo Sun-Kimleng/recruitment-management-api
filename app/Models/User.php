@@ -8,7 +8,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use App\Notifications\ResetPasswordNotification;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable implements MustVerifyEmail
 {   
@@ -26,8 +25,11 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $fillable = [
         'user_id',
         'username',
+        'fb_id',
+        'fb_token',
         'user_status',
         'email',
+        'avatar',
         'password',
         'role',
     ];
@@ -52,10 +54,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    public function job(){
+    public function jobs(){
         return $this->hasMany(Job::class, 'added_by', 'id');
     }
 
+    public function candidates(){
+        return $this->hasOne(Candidate::class);
+    }
     public function sendPasswordResetNotification($token)
     {
 

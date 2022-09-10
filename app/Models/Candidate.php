@@ -2,65 +2,46 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
-use App\Notifications\ResetPasswordNotification;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 
-class Candidate extends Authenticatable implements MustVerifyEmail
+class Candidate extends Model
 {
-    protected $table='candidates';
+    use HasFactory;
 
-    use HasApiTokens, HasFactory, Notifiable;
-
-
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'user_id',
-        'username',
-        'user_status',
+    protected $fillable= [
+        'name',
+        'workplace',
+        'city',
+        'school',
+        'job_status',
+        'interested_job',
+        'job_level',
+        'description',
+        'gender',
+        'birthday',
+        'height',
+        'weight',
+        'phone',
         'email',
-        'password',
-        'role',
-    ];
-    
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
+        'address',
+        'educations',
+        'skills',
+        'experiences',
+        'languages',
+        'cv',
+        
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'education' => 'array',
+        'skills' => 'array',
+        'experiences' => 'array',
+        'educations' => 'array',
+        'languages'=>'array'
     ];
 
-    public function job(){
-        return $this->hasMany(Job::class, 'added_by', 'id');
-    }
-
-    public function sendPasswordResetNotification($token)
-    {
-
-        $url = 'http://localhost:3000/admin/reset_password?token=' . $token;
-
-        $this->notify(new ResetPasswordNotification($url));
+    public function users(){
+        return $this->belongsTo(User::class);
     }
 }

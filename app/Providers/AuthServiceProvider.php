@@ -32,12 +32,14 @@ class AuthServiceProvider extends ServiceProvider
             'admin' => 'Admin',
             'editor' => 'Editor',
             'moderator' => 'Moderator',
+            'candidate'=> 'Candidate'
         ]);
 
         Passport::setDefaultScope([
             'admin',
             'editor',
-            'moderator'
+            'moderator',
+            'candidate'
         ]);
 
         Passport::personalAccessTokensExpireIn(now()->addDays(7));

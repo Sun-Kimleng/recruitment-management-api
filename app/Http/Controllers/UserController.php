@@ -379,7 +379,5 @@ class UserController extends Controller
         }else{
             return response()->json(['status'=>200, 'data'=>$user]);
         }
-        
-
     }
 }
