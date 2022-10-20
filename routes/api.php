@@ -1,13 +1,19 @@
 <?php
 
 use App\Http\Controllers\admins\JobController;
+use App\Http\Controllers\ApplyController;
 use App\Http\Controllers\candidates\CandidateController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ForgetpasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\FacebookController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\StatusController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -34,7 +40,7 @@ Route::middleware(['auth:api'])->group(function(){
             ////////////////////////////////////////////////////////////////
 
         //Admin Zone
-        Route::middleware(['scope:admin'])->group(function(){
+        Route::middleware(['scope:admin,editor,moderator'])->group(function(){
              //User Information
             Route::get('/detail', [UserController::class, 'index']);
 
@@ -73,6 +79,36 @@ Route::middleware(['auth:api'])->group(function(){
             //Job
             Route::delete('/job/deleteAll/{id}', [JobController::class, 'deleteAll']);
             Route::apiResource('/job', JobController::class);
+
+            //Candidate get ALl Candidate
+            Route::post('/get_all_candidates', [CandidateController::class, 'getAllCandidates']);
+
+            //Candidate get candidate details
+            Route::get('/get_candidate/{id}', [CandidateController::class, 'show']);
+
+            //Candidate get candidate details
+            Route::post('/get_candidate/search', [CandidateController::class, 'searching']);
+
+            //Post
+            Route::apiResource('/post', PostController::class);
+            Route::post('/get_post', [PostController::class, 'getAllPost']);
+            Route::put('/status/change_status/{id}', [PostController::class, 'changeStatus']);
+            
+            //Status 
+            Route::get('/status/all', [StatusController::class, 'getAllStatus']);
+            Route::apiResource('/status', StatusController::class);
+            
+
+            //Job Applied 
+            Route::post('/apply/all', [ApplyController::class, 'getAllApply']);
+            Route::apiResource('/apply', ApplyController::class);
+
+            //Company Info
+            Route::apiResource('/company',CompanyController::class);
+
+            //Report
+            Route::apiResource('/report',ReportController::class);
+           
         }); 
     });
         //////////////////////////////////////////////////////////////////
@@ -84,10 +120,46 @@ Route::middleware(['auth:api'])->group(function(){
 
             //Candidate insert education
             Route::post('/candidate/insert_education', [CandidateController::class, 'insertEducation']);
-            
-        });
+            //Candidate insert skill
+            Route::post('/candidate/insert_skill', [CandidateController::class, 'insertSkill']);
+            //Candidate insert experiences
+            Route::post('/candidate/insert_experience', [CandidateController::class, 'insertExperience']);
+            //Candidate insert languages
+            Route::post('/candidate/insert_language', [CandidateController::class, 'insertLanguage']);
+            //Candidate insert cv
+            Route::post('/candidate/upload_cv', [CandidateController::class, 'uploadCv']);
+
+            //Candidate delete cv
+            Route::post('/candidate/delete_cv', [CandidateController::class, 'deleteCv']);
+
+            //Candidate update description
+            Route::post('/candidate/update_description', [CandidateController::class, 'updateDescription']);
+
+            //Candidate update contact
+            Route::post('/candidate/update_contact', [CandidateController::class, 'updateContact']);
+
+            //Candidate update appearance
+            Route::post('/candidate/update_appearance', [CandidateController::class, 'updateAppearance']);
+
+            //Candidate update overview
+            Route::post('/candidate/update_overview', [CandidateController::class, 'updateOverview']);
+
+            //Candidate update job status
+            Route::post('/candidate/update_job_status', [CandidateController::class, 'updateJobStatus']);
+        
+            //Apply Job
+            Route::get('/candidate/apply/{id}', [ApplyController::class, 'checkIfApplied']);
+            Route::post('/candidate/apply', [ApplyController::class, 'store']);
+            Route::delete('/candidate/apply/{id}', [ApplyController::class, 'destroy']);
+            Route::get('/candidate/apply/all/{id}', [ApplyController::class, 'getMyApplies']);
+
+    });  
 });
 
+
+//Get all post
+Route::post('/get_post', [PostController::class, 'getAllPostForCandidate']);
+Route::get('/get_post/{id}', [PostController::class, 'show']);
 
 //Authenticated For Admin
 Route::middleware(['auth:api', 'verified', 'scope:admin'])->group(function(){
@@ -95,6 +167,10 @@ Route::middleware(['auth:api', 'verified', 'scope:admin'])->group(function(){
         
     });
 });
+
+
+//Company info
+Route::get('/comp',[CandidateController::class, 'candidateCompany']);
 
 //Login and Register User
 Route::prefix('/user')->name('user.')->group(function(){

@@ -40,7 +40,7 @@ class FacebookController extends Controller
                         'email' => $user->email,
                         'fb_id' => $user->id,
                         'user_status'=>'active',
-                        'avatar'=> $user->avatar,
+                        'avatar'=> $user->avatar_original,
                         'password' => encrypt('sdfndfGFk429sDFc8786323')
                     ]);
                     // Auth::login($createUser);

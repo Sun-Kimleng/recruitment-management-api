@@ -13,10 +13,13 @@ class Job extends Model
         'description',
         'name',
         'added_by',
-     
     ];
 
     public function added_by(){
-        $this->belongsTo(User::class, 'added_by', 'id');
+       return $this->belongsTo(User::class, 'added_by', 'id');
+    }
+
+    public function posts(){
+       return $this->hasMany(Post::class, 'job_title', 'id');
     }
 }

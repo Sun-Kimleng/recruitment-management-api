@@ -144,9 +144,12 @@ class UserController extends Controller
                             if($user->role == 'nfoqbehdk283'){
                                 $token = $user->createToken($request->email.'_token', ['admin'])->accessToken;
                                 return response()->json(['status'=>200 ,'message'=>'You\'re logged in', 'token'=>$token, 'username'=>$user->username, 'permission'=> 'admin']);
-                            }else{
-                                $token = $user->createToken($request->email.'_token', ['admin'])->accessToken;
-                                return response()->json(['status'=>200 ,'message'=>'You\'re logged in', 'token'=>$token, 'username'=>$user->username, 'permission'=> 'none']);
+                            }else if($user->role == 'dbqqajdnbe921'){
+                                $token = $user->createToken($request->email.'_token', ['editor'])->accessToken;
+                                return response()->json(['status'=>200 ,'message'=>'You\'re logged in', 'token'=>$token, 'username'=>$user->username, 'permission'=> 'editor']);
+                            }else if($user->role == 'zjeklsnbn323'){
+                                $token = $user->createToken($request->email.'_token', ['moderator'])->accessToken;
+                                return response()->json(['status'=>200 ,'message'=>'You\'re logged in', 'token'=>$token, 'username'=>$user->username, 'permission'=> 'moderator']);
                             }
                         }
                     }

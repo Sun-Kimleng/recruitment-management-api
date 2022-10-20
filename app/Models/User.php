@@ -61,6 +61,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function candidates(){
         return $this->hasOne(Candidate::class);
     }
+
+    public function posts(){
+       return $this->hasMany(User::class, 'posted_by', 'id');
+    }
+
     public function sendPasswordResetNotification($token)
     {
 
